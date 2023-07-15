@@ -2,6 +2,20 @@
 using static System.Collections.Specialized.BitVector32;
 using System;
 
+static void ShowList(string[] items)
+{
+    for (int i = 0; i < items.Length; i++)
+    {
+        if (items[i] != null)
+        {
+            Console.WriteLine(items[i]);
+        }
+    }
+    return;
+}
+
+
+string operations = "1: Add\n2: Complete Task\n3: Remove Task\n4: Show Tasks\n5: Quit\n: ";
 // initialize task list array
 string [] todo = new string[10];
 // initialize task counter
@@ -11,21 +25,21 @@ bool exit = false;
 
 while (exit == false) {
     // print options to user
-    Console.Write("1: Add\n2: Complete Task\n3: Remove Task\n4: Quit\n: ");
+    Console.Write(operations);
     int selectInt = 0;
     // prompt user until valid input is provided
     while (true)
     {
         string? selectStr = Console.ReadLine();
         // if input is valid, output integer to selectInt and exit
-        if (int.TryParse(selectStr, out selectInt) && int.Parse(selectStr) > 0 && int.Parse(selectStr) <= 4)
+        if (int.TryParse(selectStr, out selectInt) && int.Parse(selectStr) > 0 && int.Parse(selectStr) <= 5)
         {
             break;
         }
         else
         {
-            Console.WriteLine("Please input an integer between 1 and 4");
-            Console.Write("1: Add\n2: Complete Task\n3: Remove Task\n4: Quit\n: ");
+            Console.WriteLine("Please input an integer between 1 and 5");
+            Console.Write(operations);
         }
     }
 
@@ -75,9 +89,15 @@ while (exit == false) {
             todo[taskNum - 1] = completedTask;
             break;
 
-        // TODO: Add ability to re-print the list as an operation
-        // exit the program and print your final list
+        // print current list contents
         case 4:
+            ShowList(todo);
+            Console.Write("Press enter to continue:");
+            Console.ReadLine();
+            break;
+
+        // exit the program and print your final list
+        case 5:
             exit = true;
             break;
         default:
@@ -88,13 +108,7 @@ while (exit == false) {
 }
 
 // print the final list
-for (int i = 0; i < todo.Length; i++)
-{
-    if (todo[i] != null)
-    {
-        Console.WriteLine(todo[i]);
-    }
-}
+ShowList(todo);
 // leave list displayed until key press
 Console.ReadLine();
 

@@ -43,18 +43,20 @@ namespace Templist
                     // add task
                     case 1:
                         Console.Write("Task name: ");
-                        todo[counter] = new Tasks("[ ] " + Console.ReadLine());
+                        todo[counter] = new Tasks(Console.ReadLine());
                         counter++;
                         break;
 
                     // mark a task complete (x in [])
                     case 2:
+                        int taskCount = 0;
                         // print numbered task list
                         for (int i = 1; i <= todo.Length; i++)
                         {
                             if (todo[i - 1] != null)
                             {
-                                Console.WriteLine(i + todo[i - 1].TaskName);
+                                Console.WriteLine($"{i} {todo[i - 1].TaskName}");
+                                taskCount += 1;
                             }
                         }
                         // initialize integer to store input string after int conversion
@@ -66,7 +68,7 @@ namespace Templist
                             string? taskStr = Console.ReadLine();
 
                             // if input is valid, output integer to taskNum and exit
-                            if (int.TryParse(taskStr, out taskNum) && int.Parse(taskStr) > 0 && int.Parse(taskStr) <= todo.Length)
+                            if (int.TryParse(taskStr, out taskNum) && int.Parse(taskStr) > 0 && int.Parse(taskStr) <= taskCount)
                             {
                                 break;
                             }
@@ -76,11 +78,8 @@ namespace Templist
                             }
                         }
 
-                        // TODO: implement this using the completed attribute of the Task class
                         // check off the selected task
-                        string completedTask = todo[taskNum - 1].TaskName;
-                        completedTask = "[x]" + completedTask.Substring(3, (completedTask.Length - 3));
-                        todo[taskNum - 1].TaskName = completedTask;
+                        todo[taskNum - 1].IsComplete = true;
                         break;
 
                     // print current list contents
@@ -113,9 +112,13 @@ namespace Templist
             {
                 for (int i = 0; i < items.Length; i++)
                 {
-                    if (items[i] != null)
+                    if (items[i] != null && items[i].IsComplete == false)
                     {
-                        Console.WriteLine(items[i].TaskName);
+                        Console.WriteLine("[ ]" + items[i].TaskName);
+                    }
+                    else if (items[i] != null && items[i].IsComplete == true)
+                    {
+                        Console.WriteLine("[x]" + items[i].TaskName);
                     }
                 }
                 return;
@@ -128,7 +131,7 @@ namespace Templist
     public class Tasks
     {
         public string TaskName { get; set; }
-        bool complete = false;
+        public bool IsComplete = false;
 
         public Tasks(string taskName)
         {

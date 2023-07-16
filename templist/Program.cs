@@ -11,8 +11,7 @@ namespace Templist
             string operations = "1: Add\n2: Complete Task\n3: Remove Task\n4: Show Tasks\n5: Quit\n: ";
             // initialize task list array
             Tasks[] todo = new Tasks[10];
-            // initialize task counter
-            int counter = 0;
+            int taskCount = 0;
             // initialize exit condition for main loop
             bool exit = false;
 
@@ -25,7 +24,7 @@ namespace Templist
                 while (true)
                 {
                     string? selectStr = Console.ReadLine();
-                    // if input is valid, output integer to selectInt and exit
+                    // if input is valid, assign integer to selectInt and exit
                     if (int.TryParse(selectStr, out selectInt) && int.Parse(selectStr) > 0 && int.Parse(selectStr) <= 5)
                     {
                         break;
@@ -43,20 +42,19 @@ namespace Templist
                     // add task
                     case 1:
                         Console.Write("Task name: ");
-                        todo[counter] = new Tasks(Console.ReadLine());
-                        counter++;
+                        // create new task with user input as the TaskName
+                        todo[taskCount] = new Tasks(Console.ReadLine());
+                        taskCount++;
                         break;
 
                     // mark a task complete (x in [])
                     case 2:
-                        int taskCount = 0;
                         // print numbered task list
                         for (int i = 1; i <= todo.Length; i++)
                         {
                             if (todo[i - 1] != null)
                             {
                                 Console.WriteLine($"{i} {todo[i - 1].TaskName}");
-                                taskCount += 1;
                             }
                         }
                         // initialize integer to store input string after int conversion
@@ -74,7 +72,7 @@ namespace Templist
                             }
                             else
                             {
-                                Console.WriteLine($"Please input an integer between 1 and {todo.Length}");
+                                Console.WriteLine($"Please input an integer between 1 and {taskCount}");
                             }
                         }
 
@@ -110,6 +108,7 @@ namespace Templist
 
             static void ShowList(Tasks[] items)
             {
+                // iterate through all tasks and print them checked or open
                 for (int i = 0; i < items.Length; i++)
                 {
                     if (items[i] != null && items[i].IsComplete == false)
@@ -133,6 +132,7 @@ namespace Templist
         public string TaskName { get; set; }
         public bool IsComplete = false;
 
+        // allow new tasks to be provided a string for their name
         public Tasks(string taskName)
         {
             TaskName = taskName;

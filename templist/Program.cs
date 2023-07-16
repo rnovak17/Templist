@@ -41,9 +41,13 @@ namespace Templist
                 {
                     // add task
                     case 1:
-                        Console.Write("Task name: ");
-                        // create new task with user input as the TaskName
-                        todo[taskCount] = new Tasks(Console.ReadLine());
+                        // prompt user until task name is not blank
+                        while (todo[taskCount] == null || todo[taskCount].TaskName == "")
+                        {
+                            Console.Write("Task name: ");
+                            // create new task with user input as the TaskName
+                            todo[taskCount] = new Tasks(Console.ReadLine());
+                        }
                         taskCount++;
                         break;
 

@@ -10,7 +10,7 @@ namespace Templist
         {
             string operations = "1: Add\n2: Complete Task\n3: Remove Task\n4: Show Tasks\n5: Quit\n: ";
             // initialize task list array
-            Tasks[] todo = new Tasks[10];
+            Tasks[] todo = new Tasks[] {null};
             int taskCount = 0;
             // initialize exit condition for main loop
             bool exit = false;

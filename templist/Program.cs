@@ -1,5 +1,8 @@
 ﻿using static System.Collections.Specialized.BitVector32;
 using System;
+using System.Xml;
+
+
 
 
 namespace Templist
@@ -10,7 +13,7 @@ namespace Templist
         {
             string operations = "1: Add\n2: Complete Task\n3: Remove Task\n4: Show Tasks\n5: Quit\n: ";
             // initialize task list array
-            Tasks[] todo = new Tasks[] {null};
+            Tasks[] todo = new Tasks[] { null };
             int taskCount = 0;
             // initialize exit condition for main loop
             bool exit = false;
@@ -104,29 +107,44 @@ namespace Templist
 
             // print the final list
             ShowList(todo);
+            MakeTaskFile();
             // leave list displayed until key press
             Console.ReadLine();
+        }
 
-
-
-
-            static void ShowList(Tasks[] items)
+        static void ShowList(Tasks[] items)
+        {
+            // iterate through all tasks and print them checked or open
+            for (int i = 0; i < items.Length; i++)
             {
-                // iterate through all tasks and print them checked or open
-                for (int i = 0; i < items.Length; i++)
+                if (items[i] != null && items[i].IsComplete == false)
                 {
-                    if (items[i] != null && items[i].IsComplete == false)
-                    {
-                        Console.WriteLine("[ ]" + items[i].TaskName);
-                    }
-                    else if (items[i] != null && items[i].IsComplete == true)
-                    {
-                        Console.WriteLine("[x]" + items[i].TaskName);
-                    }
+                    Console.WriteLine("[ ]" + items[i].TaskName);
                 }
-                return;
+                else if (items[i] != null && items[i].IsComplete == true)
+                {
+                    Console.WriteLine("[x]" + items[i].TaskName);
+                }
             }
+            return;
+        }
 
+        static void MakeTaskFile()
+        {
+            // define the project directory to create the xml file in
+            string workingDir = AppDomain.CurrentDomain.BaseDirectory;
+            string projectDir = Directory.GetParent(workingDir).Parent.Parent.Parent.FullName;
+
+            // define a new xml document, taskList
+            XmlDocument taskList = new XmlDocument();
+
+            // create the root element in the new file
+            XmlElement root = taskList.CreateElement("TASKS");
+            taskList.AppendChild(root);
+
+            // save the xml document in the directory specified above
+            taskList.Save($"{projectDir}/tasks.xml");
+            //Console.WriteLine(taskList.InnerXml);
         }
     }
 

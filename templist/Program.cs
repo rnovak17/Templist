@@ -11,12 +11,18 @@ namespace Templist
     {
         static void Main(string[] args)
         {
-            string operations = "1: Add\n2: Complete Task\n3: Remove Task\n4: Show Tasks\n5: Quit\n: ";
+            // TODO: check if an xml file exists, create one if it does not
+            MakeTaskFile();
+            // TODO: import data from xml file into task list
             // initialize task list array
             Tasks[] todo = new Tasks[] { null };
             int taskCount = 0;
+
+            string operations = "1: Add\n2: Complete Task\n3: Remove Task\n4: Show Tasks\n5: Quit\n: ";
+
             // initialize exit condition for main loop
             bool exit = false;
+
 
             while (exit == false)
             {
@@ -107,7 +113,7 @@ namespace Templist
 
             // print the final list
             ShowList(todo);
-            MakeTaskFile();
+            AddTask("Test task");
             // leave list displayed until key press
             Console.ReadLine();
         }
@@ -145,6 +151,27 @@ namespace Templist
             // save the xml document in the directory specified above
             taskList.Save($"{projectDir}/tasks.xml");
             //Console.WriteLine(taskList.InnerXml);
+        }
+
+        static void AddTask(string taskInput)
+        {
+            // define the project directory to create the xml file in
+            string workingDir = AppDomain.CurrentDomain.BaseDirectory;
+            string projectDir = Directory.GetParent(workingDir).Parent.Parent.Parent.FullName;
+
+            XmlDocument taskList = new XmlDocument();
+
+            taskList.Load($"{projectDir}/tasks.xml");
+            XmlNode root = taskList.SelectSingleNode("TASKS");
+            XmlElement task = taskList.CreateElement("TASK");
+            root.AppendChild(task);
+
+            XmlAttribute id = taskList.CreateAttribute("id");
+            task.Attributes.Append(id);
+
+            XmlElement taskName = taskList.CreateElement("TASKNAME");
+            task.AppendChild(taskName);
+            Console.WriteLine(taskList.InnerXml);
         }
     }
 

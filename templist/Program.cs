@@ -11,11 +11,14 @@ namespace Templist
     {
         static void Main(string[] args)
         {
-            // TODO: check if an xml file exists, create one if it does not
-            MakeTaskFile();
+            // check if an xml file exists, create one if it does not
+            if (File.Exists($"{Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName}/tasks.xml") == false)
+            {
+                MakeTaskFile();
+            }
             // TODO: import data from xml file into task list
             // initialize task list array
-            Tasks[] todo = new Tasks[] { null };
+            Tasks[] todo = new Tasks[20];
             int taskCount = 0;
 
             string operations = "1: Add\n2: Complete Task\n3: Remove Task\n4: Show Tasks\n5: Quit\n: ";
@@ -50,13 +53,16 @@ namespace Templist
                 {
                     // add task
                     case 1:
+                        string userTask = "";
                         // prompt user until task name is not blank
                         while (todo[taskCount] == null || todo[taskCount].TaskName == "")
                         {
                             Console.Write("Task name: ");
+                            userTask = Console.ReadLine();
                             // create new task with user input as the TaskName
-                            todo[taskCount] = new Tasks(Console.ReadLine());
+                            todo[taskCount] = new Tasks(userTask);
                         }
+                        AddTask(userTask);
                         taskCount++;
                         break;
 
@@ -113,7 +119,6 @@ namespace Templist
 
             // print the final list
             ShowList(todo);
-            AddTask("Test task");
             // leave list displayed until key press
             Console.ReadLine();
         }
@@ -137,7 +142,7 @@ namespace Templist
 
         static void MakeTaskFile()
         {
-            // define the project directory to create the xml file in
+            // define the project directory to create xml file in
             string workingDir = AppDomain.CurrentDomain.BaseDirectory;
             string projectDir = Directory.GetParent(workingDir).Parent.Parent.Parent.FullName;
 
@@ -155,7 +160,7 @@ namespace Templist
 
         static void AddTask(string taskInput)
         {
-            // define the project directory to create the xml file in
+            // define the project directory to create xml file in
             string workingDir = AppDomain.CurrentDomain.BaseDirectory;
             string projectDir = Directory.GetParent(workingDir).Parent.Parent.Parent.FullName;
 
@@ -167,10 +172,13 @@ namespace Templist
             root.AppendChild(task);
 
             XmlAttribute id = taskList.CreateAttribute("id");
+            id.Value = taskList.SelectNodes("TASKS/TASK").Count.ToString();
             task.Attributes.Append(id);
 
             XmlElement taskName = taskList.CreateElement("TASKNAME");
+            taskName.InnerText = taskInput;
             task.AppendChild(taskName);
+            taskList.Save($"{projectDir}/tasks.xml");
             Console.WriteLine(taskList.InnerXml);
         }
     }

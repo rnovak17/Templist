@@ -24,6 +24,8 @@ namespace Templist
             // TODO: import data from xml file into task list
             // initialize task list array
             Tasks[] todo = new Tasks[20];
+
+            // TODO: include existing XML entries in taskCount
             int taskCount = 0;
 
             string operations = "1: Add\n2: Complete Task\n3: Remove Task\n4: Show Tasks\n5: Quit\n: ";
@@ -79,29 +81,38 @@ namespace Templist
                         {
                             //string task = node.InnerText;
                             Console.WriteLine(node.Attributes["id"].Value + " " + node.InnerText);
-                        }
+                        };
                         // initialize integer to store input string after int conversion
                         int taskNum = 0;
 
                         // prompt user until valid input is provided
-                        //while (true)
-                        //{
-                        //    Console.Write("Enter task number: ");
-                        //    string? taskStr = Console.ReadLine();
+                        while (true)
+                        {
+                            Console.Write("Enter task number: ");
+                            string? taskStr = Console.ReadLine();
 
-                        //    // if input is valid, output integer to taskNum and exit
-                        //    if (int.TryParse(taskStr, out taskNum) && int.Parse(taskStr) > 0 && int.Parse(taskStr) <= taskCount)
-                        //    {
-                        //        break;
-                        //    }
-                        //    else
-                        //    {
-                        //        Console.WriteLine($"Please input an integer between 1 and {taskCount}");
-                        //    }
-                        //}
-                        // TODO: Fix task checking implementation using XML
+                            // if input is valid, output integer to taskNum and exit
+                            if (int.TryParse(taskStr, out taskNum) && int.Parse(taskStr) > 0 && int.Parse(taskStr) <= taskCount)
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                Console.WriteLine($"Please input an integer between 1 and {taskCount}");
+                            }
+                        }
+
                         // check off the selected task
-                        todo[taskNum - 1].IsComplete = true;
+                        foreach (XmlNode node in xmlDoc.DocumentElement.ChildNodes)
+                        {
+                            //string task = node.InnerText;
+                            if (node.Attributes["id"].Value == $"{taskNum}")
+                            {
+                                Console.WriteLine(node.Attributes["id"].Value);
+                                node.Attributes["completion"].Value = "complete";
+                            }
+                        }
+                        xmlDoc.Save(xmlPath);
                         break;
                     case 4:
                         ShowList(xmlDoc);
@@ -131,8 +142,14 @@ namespace Templist
             xmlDoc.Load(xmlPath);
             foreach (XmlNode node in xmlDoc.DocumentElement.ChildNodes)
             {
-                //string task = node.InnerText;
-                Console.WriteLine("[ ]" + node.InnerText);
+                if (node.Attributes["completion"].Value == "complete")
+                {
+                    Console.WriteLine("[x]" + node.InnerText);
+                }
+                else
+                {
+                    Console.WriteLine("[ ]" + node.InnerText);
+                }
             }
             return;
         }
@@ -163,6 +180,10 @@ namespace Templist
             XmlAttribute id = taskList.CreateAttribute("id");
             id.Value = taskList.SelectNodes("TASKS/TASK").Count.ToString();
             task.Attributes.Append(id);
+
+            XmlAttribute completion = taskList.CreateAttribute("completion");
+            completion.Value = "incomplete";
+            task.Attributes.Append(completion);
 
             XmlElement taskName = taskList.CreateElement("TASKNAME");
             taskName.InnerText = taskInput;

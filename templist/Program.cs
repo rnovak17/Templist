@@ -21,18 +21,19 @@ namespace Templist
             }
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load(xmlPath);
-            // TODO: import data from xml file into task list
-            // initialize task list array
-            Tasks[] todo = new Tasks[20];
 
-            // TODO: include existing XML entries in taskCount
+            // initialize task count to the number of existing tasks in XML file
             int taskCount = 0;
+            XmlNodeList elemList = xmlDoc.GetElementsByTagName("TASK");
+            for (int i=0; i < elemList.Count; i++)
+            {
+                taskCount++;
+            }
 
             string operations = "1: Add\n2: Complete Task\n3: Remove Task\n4: Show Tasks\n5: Quit\n: ";
 
             // initialize exit condition for main loop
             bool exit = false;
-
 
             while (exit == false)
             {
@@ -62,12 +63,11 @@ namespace Templist
                     case 1:
                         string userTask = "";
                         // prompt user until task name is not blank
-                        while (todo[taskCount] == null || todo[taskCount].TaskName == "")
+                        while (userTask == "")
                         {
                             Console.Write("Task name: ");
                             userTask = Console.ReadLine();
                             // create new task with user input as the TaskName
-                            todo[taskCount] = new Tasks(userTask);
                         }
                         AddTask(userTask);
                         taskCount++;
@@ -91,6 +91,7 @@ namespace Templist
                             Console.Write("Enter task number: ");
                             string? taskStr = Console.ReadLine();
 
+                            // TODO: refactor using information from XML doc -> should take care of itself once taskCount is initiated properly
                             // if input is valid, output integer to taskNum and exit
                             if (int.TryParse(taskStr, out taskNum) && int.Parse(taskStr) > 0 && int.Parse(taskStr) <= taskCount)
                             {

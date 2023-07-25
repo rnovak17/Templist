@@ -81,7 +81,7 @@ namespace Templist
                         {
                             //string task = node.InnerText;
                             Console.WriteLine(node.Attributes["id"].Value + " " + node.InnerText);
-                        };
+                        }
                         // initialize integer to store input string after int conversion
                         int taskNum = 0;
 
@@ -91,7 +91,6 @@ namespace Templist
                             Console.Write("Enter task number: ");
                             string? taskStr = Console.ReadLine();
 
-                            // TODO: refactor using information from XML doc -> should take care of itself once taskCount is initiated properly
                             // if input is valid, output integer to taskNum and exit
                             if (int.TryParse(taskStr, out taskNum) && int.Parse(taskStr) > 0 && int.Parse(taskStr) <= taskCount)
                             {
@@ -114,6 +113,36 @@ namespace Templist
                             }
                         }
                         xmlDoc.Save(xmlPath);
+                        break;
+                    case 3:
+                        // TODO: Update ID values after task is removed
+                        xmlDoc.Load(xmlPath);
+                        foreach (XmlNode node in xmlDoc.DocumentElement.ChildNodes)
+                        {
+                            //string task = node.InnerText;
+                            Console.WriteLine(node.Attributes["id"].Value + " " + node.InnerText);
+                        }
+
+                        // prompt user until valid input is provided
+                        while (true)
+                        {
+                            Console.Write("Enter task number: ");
+                            string? taskStr = Console.ReadLine();
+
+                            // if input is valid, output integer to taskNum and exit
+                            if (int.TryParse(taskStr, out taskNum) && int.Parse(taskStr) > 0 && int.Parse(taskStr) <= taskCount)
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                Console.WriteLine($"Please input an integer between 1 and {taskCount}");
+                            }
+                        }
+                        var removedTask = xmlDoc.SelectSingleNode($"//*[@id='{taskNum}']");
+                        xmlDoc["TASKS"].RemoveChild(removedTask);
+                        xmlDoc.Save(xmlPath);
+                        Console.WriteLine("Task removed.");
                         break;
                     case 4:
                         ShowList(xmlDoc);

@@ -141,13 +141,16 @@ namespace Templist
                         }
                         var removedTask = xmlDoc.SelectSingleNode($"//*[@id='{taskNum}']");
                         xmlDoc["TASKS"].RemoveChild(removedTask);
-                        xmlDoc.Save(xmlPath);
-                        int idCount = 1;
+
+                        // correct task ID numbers
                         foreach (XmlNode node in xmlDoc.DocumentElement.ChildNodes)
                         {
-                            //string task = node.InnerText;
-                            node.Attributes["id"].Value = $"{idCount}";
-                            idCount++;
+                            int taskID = Convert.ToInt16(node.Attributes["id"].Value);
+                            // select all nodes with IDs greater than removed node and decrement them
+                            if (taskID > taskNum) {
+                                taskID--;
+                                node.Attributes["id"].Value = $"{taskID}";
+                            }
                         }
                         xmlDoc.Save(xmlPath);
                         Console.WriteLine("Task removed.");

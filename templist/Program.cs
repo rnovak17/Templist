@@ -142,6 +142,14 @@ namespace Templist
                         var removedTask = xmlDoc.SelectSingleNode($"//*[@id='{taskNum}']");
                         xmlDoc["TASKS"].RemoveChild(removedTask);
                         xmlDoc.Save(xmlPath);
+                        int idCount = 1;
+                        foreach (XmlNode node in xmlDoc.DocumentElement.ChildNodes)
+                        {
+                            //string task = node.InnerText;
+                            node.Attributes["id"].Value = $"{idCount}";
+                            idCount++;
+                        }
+                        xmlDoc.Save(xmlPath);
                         Console.WriteLine("Task removed.");
                         break;
                     case 4:
@@ -157,7 +165,6 @@ namespace Templist
                     default:
                         Console.WriteLine("Please input one of the characters provided.");
                         break;
-
                 }
             }
 
